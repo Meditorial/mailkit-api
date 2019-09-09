@@ -16,7 +16,7 @@
   ],
   "require": {
     "php": ">=7.1.0",
-    "nette/utils": "^2.4",
+    "nette/utils": "^3.0.1",
     "ext-xmlrpc": "*",
     "consistence/consistence": "0.20"
   },
