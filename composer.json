@@ -1,5 +1,5 @@
 {
-  "name": "igloonet/mailkit-api",
+  "name": "krencl/mailkit-api",
   "type": "library",
   "description": "Mailkit api client library",
   "keywords": ["igloonet", "mailkit", "mail"],
