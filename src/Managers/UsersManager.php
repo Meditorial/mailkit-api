@@ -434,4 +434,55 @@ class UsersManager extends BaseManager
 
 		throw new UserEditUnknownErrorException($rpcResponse, $message);
 	}
+
+	/**
+	 * @param string $email
+	 * @return int[]
+	 */
+	public function deleteEmailAddress(string $email): array
+	{
+		$response = $this->deleteUser($email);
+
+		$emailIds = array_map(function (string $emailId) {
+			return (int) $emailId;
+		}, explode(',', $response));
+
+		return $emailIds;
+	}
+
+	/**
+	 * @param int $emailId
+	 * @return int
+	 */
+	public function deleteEmailId(int $emailId): int
+	{
+		return (int) $this->deleteUser((string)$emailId);
+	}
+
+	/**
+	 * @param string $emailId email or emailId
+	 * @return string
+	 */
+	private function deleteUser(string $emailId): string
+	{
+		$params = [
+			'ID_email' => $emailId,
+		];
+
+		$possibleErrors = [
+			'',
+		];
+
+		$rpcResponse = $this->sendRpcRequest('mailkit.email.delete', $params, $possibleErrors);
+
+		if ($rpcResponse->isError()) {
+			throw new UserUnsubscribtionInvalidEmailIdException($rpcResponse);
+		}
+
+		try {
+			return (string) $rpcResponse->getIntegerValue();
+		} catch (InvalidDataTypeException $e) {
+			return $rpcResponse->getStringValue();
+		}
+	}
 }

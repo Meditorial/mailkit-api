@@ -88,7 +88,7 @@ class XmlAdapter extends BaseAdapter
 			} else {
 				foreach ($possibleErrors as $possibleError) {
 					if (Strings::compare($responseData, $possibleError) ||
-						Strings::match($responseData, '~'.$possibleError.'~')
+						($possibleError !== '' && Strings::match($responseData, '~'.$possibleError.'~'))
 					) {
 						return new XmlErrorRpcResponse($responseData);
 					}
