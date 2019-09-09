@@ -15,6 +15,9 @@ use Igloonet\MailkitApi\Exceptions\User\UserCreationInvalidTemplateIdException;
 use Igloonet\MailkitApi\Exceptions\User\UserCreationMissingEmailException;
 use Igloonet\MailkitApi\Exceptions\User\UserCreationMissingMailingListIdException;
 use Igloonet\MailkitApi\Exceptions\User\UserCreationUnknownErrorException;
+use Igloonet\MailkitApi\Exceptions\User\UserDeleteInvalidEmailIdException;
+use Igloonet\MailkitApi\Exceptions\User\UserDeleteMissingEmailIdException;
+use Igloonet\MailkitApi\Exceptions\User\UserDeleteUnknownException;
 use Igloonet\MailkitApi\Exceptions\User\UserEditException;
 use Igloonet\MailkitApi\Exceptions\User\UserEditInvalidEmailIdException;
 use Igloonet\MailkitApi\Exceptions\User\UserEditInvalidMailingListIdException;
@@ -471,12 +474,23 @@ class UsersManager extends BaseManager
 
 		$possibleErrors = [
 			'',
+			'Missing ID_email',
+			'Invalid ID_email',
 		];
 
 		$rpcResponse = $this->sendRpcRequest('mailkit.email.delete', $params, $possibleErrors);
-
 		if ($rpcResponse->isError()) {
-			throw new UserUnsubscribtionInvalidEmailIdException($rpcResponse);
+			switch ($rpcResponse->getError()) {
+				case 'Missing ID_email':
+					throw new UserDeleteMissingEmailIdException($rpcResponse);
+					break;
+				case 'Invalid ID_email':
+					throw new UserDeleteInvalidEmailIdException($rpcResponse);
+					break;
+				default:
+					throw new UserDeleteUnknownException($rpcResponse);
+					break;
+			}
 		}
 
 		try {
